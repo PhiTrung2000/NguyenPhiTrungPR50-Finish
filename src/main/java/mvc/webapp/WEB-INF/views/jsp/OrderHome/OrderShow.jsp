@@ -5,28 +5,36 @@
 <head>
     <meta charset="UTF-8">
     <title>Orders List</title>
+    <!-- Bao gồm thư viện Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <h1>Orders List</h1>
-    <table border="1">
-        <tr>
-            <th>OrderID</th>
-            <th>OrderDate</th>
-            <th>Customer Name</th>
-            <th>Actions</th>
-        </tr>
-        <c:forEach var="order" items="${ordershow}" varStatus="index">
-            <tr>
-                <td>${order.orderId}</td>
-                <td>${order.orderDate}</td>
-                <td>${order.customerName}</td>
-                <td>
-                    <a href="/NguyenPhiTrungPR50/orderDetails/${order.orderId}">View Detail</a>
-                    <a href="/NguyenPhiTrungPR50/editOrder/${order.orderId}">Edit</a>
-                    <a href="/NguyenPhiTrungPR50/deleteOrder/${order.orderId}">Delete</a>
-                </td>
-            </tr>
-        </c:forEach>
-    </table>
+    <div class="container">
+        <h1>Orders List</h1>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>OrderID</th>
+                    <th>OrderDate</th>
+                    <th>Customer Name</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <c:forEach var="order" items="${ordershow}" varStatus="index">
+                    <tr>
+                        <td>${order.orderId}</td>
+                        <td>${order.orderDate}</td>
+                        <td>${order.customerName}</td>
+                        <td>
+                            <a href="/orderDetails/${order.orderId}" class="btn btn-primary">View Detail</a>
+                            <a href="/editOrder/${order.orderId}" class="btn btn-warning">Edit</a>
+                            <a href="/deleteOrder/${order.orderId}" class="btn btn-danger">Delete</a>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

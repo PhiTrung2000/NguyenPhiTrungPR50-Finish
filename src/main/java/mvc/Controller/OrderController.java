@@ -5,15 +5,18 @@ import mvc.Entity.OrdersEntity;
 import mvc.Repository.OrderDetailsRepository;
 import mvc.Repository.OrdersRepository;
 import mvc.Service.OrderService;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -44,9 +47,10 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/editOrder/{orderId}", method = RequestMethod.GET)
-    public String editOrder(@PathVariable("orderId") int orderId, Model model) {
+    public String editOrder(@PathVariable("orderId") int orderId, Model model, HttpSession session) {
         // Lấy thông tin đơn hàng từ cơ sở dữ liệu dựa trên orderId
         OrdersEntity order = orderService.getOrderById(orderId);
+        session.setAttribute("infomation", order);
 
         // Đưa thông tin đơn hàng vào model để hiển thị trên trang chỉnh sửa
         model.addAttribute("order", order);
@@ -54,11 +58,20 @@ public class OrderController {
         return "OrderHome/EditOrder"; // Trả về trang chỉnh sửa Order
     }
 
-    @RequestMapping(value = "/editOrder/{orderId}", method = RequestMethod.PUT)
-    public String updateOrder(@PathVariable("orderId") int orderId, @ModelAttribute("order") OrdersEntity updatedOrder) {
+    @RequestMapping(value = "/editOrder/update", method = RequestMethod.POST,  produces = "text/html; charset=UTF-8")
+    public String updateOrder(
+                              @RequestParam("orderDate") @DateTimeFormat(pattern = "yyyy-MM-dd") Date orderdate,
+                              @RequestParam("customerName") String customer,
+                              HttpSession session
+                             ){
         // Xử lý cập nhật thông tin đơn hàng với orderId
-        orderService.updateOrder(orderId, updatedOrder);
+        System.out.println("Họ tên: " + customer);
+        OrdersEntity orders = (OrdersEntity) session.getAttribute("infomation");
+        OrdersEntity ordersEntity = orderService.getOrderById(orders.getOrderId());
+        ordersEntity.setOrderDate(orderdate);
+        ordersEntity.setCustomerName(customer);
+        ordersRepository.save(ordersEntity);
 
-        return "redirect:/NguyenPhiTrungPR50/orders"; // Trả về trang danh sách đơn hàng sau khi cập nhật
+        return "redirect:/"; // Trả về trang danh sách đơn hàng sau khi cập nhật
     }
 }

@@ -13,6 +13,7 @@ public class OrdersEntity {
     private int orderId;
 
     @Column(name = "orderDate")
+    @Temporal(TemporalType.DATE)
     private Date orderDate;
 
     @Column(name = "customerName", length = 255)
